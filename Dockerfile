@@ -5,6 +5,8 @@ LABEL \
 	version="2.2.0"
 
 ADD target_filesystem/ /
+ARG HOSTS
+ENV HOSTS ${HOSTS:-"10.0.0.9 controller"}
 
 RUN yum -y install \
 			ansible \
@@ -20,13 +22,15 @@ RUN yum -y install \
                         openssl-devel \ 
                         mysql \
                         && \
+                pip install ansible && \
                 pip install shade && \
 		wget "https://github.com/ansible-semaphore/semaphore/releases/download/v2.2.0/semaphore_linux_amd64" && \
 		mv semaphore_linux_amd64 /usr/bin/semaphore && \
 		mkdir -p  /opt/data/semaphore/ && \
 		chmod +x  /usr/bin/semaphore && \
 		chmod +x  /opt/semaphore/start.sh && \
-		touch /firstrun
+		touch /firstrun && \
+                [ -n "${HOSTS}" ] && echo "${HOSTS}" >> /etc/hosts
 
 # Ports
 EXPOSE 3000

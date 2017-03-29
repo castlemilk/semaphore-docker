@@ -14,9 +14,13 @@ services:
       - /opt/data/mysql/:/var/lib/mysql
 
   semaphore_api:
-    build: .
+    build:
+      context: .
+      args:
+        HOSTS: "10.0.0.9 controller"
     #image: dsmorse/semaphore-docker:latest
     environment:
+      HOSRS: "10.0.0.9 controller"
       SEMAPHORE_DB_USER: semaphore
       SEMAPHORE_DB_PASS: semaphore
       SEMAPHORE_DB_HOST: mysql
@@ -33,6 +37,8 @@ services:
       - 8081:3000
     links:
       - mysql:mysql
+    extra_hosts:
+      - "controller:10.0.0.9" 
 #    volumes:
 #      - /opt/data/semaphore/:/opt/data/semaphore
   semaphore_proxy:
